@@ -5,11 +5,11 @@ module debounce(
     input clk,rst,
     output reg key
     );
-    reg [15:0] cnt; // 5만 분주
+    reg [15:0] cnt; // 50,000 divide
     reg pls_1k0,pls_1k1;
 
     reg btn0,btn1;
-    reg [4:0] btn_cnt; // 31분주
+    reg [4:0] btn_cnt; // wait 30ms
     
     always @(negedge rst or posedge clk) begin
         if(rst == 0) begin
@@ -18,7 +18,7 @@ module debounce(
             btn_cnt <= 0;
             key <= 0;
         end else if(pls_1k0 & ~pls_1k1) begin
-            //rising edge검출
+            //detect rising edge
             btn0 <= btnr;
             btn1 <= btn0;
             if(btn0 ^ btn1)
@@ -26,7 +26,7 @@ module debounce(
             else if(btn_cnt < 30)
                 btn_cnt <= btn_cnt + 1;
             if(btn_cnt == 29)
-                key <= btn1;
+                key <= btn1; // key is clean signal with no noise
         end
     end
 
