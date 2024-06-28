@@ -1,16 +1,17 @@
 
 module hex2seg(
-    input [2:0] sel,
+    input [2:0] sel, // 추가된 부분
     input [3:0] din,
     output [7:0] seg_d
     );
 
-    wire [3:0] idin;
+    wire [3:0] idin; // 추가된 부분
 
-    assign idin = din+sel;
+    assign idin = din+sel; //여기서 din+sel
 
    assign seg_d = (sel > 3) ? (8'h49):
-                    (idin == 4'h0)?(8'h3f):
+                  //sel가 3보다 크지않을때 다음 값 출력
+                  (idin == 4'h0)?(8'h3f):
                   (idin == 4'h1) ? (8'h06) :
                   (idin == 4'h2) ? (8'h5b) :
                   (idin == 4'h3) ? (8'h4f) :

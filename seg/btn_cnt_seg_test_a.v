@@ -4,36 +4,36 @@ module btn_cnt_seg_test_a(
     input btnl, // High Active Reset
     input btnr, // Tact switch input 
     input clk, // 100MHz Clock Input
-   input [3:0] sw,
+   input [3:0] sw, // segment자릿수 선택,an과 연결됨
    output [3:0] an,
-   output dp,
+   output dp, // all zero
    output [6:0] seg, //dp,g,~a
-   output [3:0] led
+   output [3:0] led // counter값에따라 증가하여 led불
     );
     wire rst;
     wire key0;
     reg key1;
     reg [3:0] cnt;
 
-    wire [7:0] seg_d;
+    wire [7:0] seg_d; // seven_segment decoder의 출력
    
-    wire [2:0] sel;
+    wire [2:0] sel; // 외부의 sw입력을 받음
     wire [3:0] din;
 
-    assign sel = (sw==4'h7)?3'd0:
-                (sw==4'hb)?3'd1:
-                (sw==4'hd)?3'd2:
-                (sw==4'he)?3'd3: 3'd7;
-
+    assign sel = (sw==4'b0111)?3'd0: // 맨왼쪽 digit일때, select값 0
+                (sw==4'b1011)?3'd1: 
+                (sw==4'b1101)?3'd2:
+                (sw==4'b1110)?3'd3: 3'd7;
+                //select값 0,1,2,3은 정상범위이고 7일때 값은 에러임
 
     hex2seg u_hex2seg_0(
-        .sel(sel),
+        .sel(sel), // 변화준 부분
         .din(cnt),
         .seg_d(seg_d)
     );
     
-    assign an = sw;
-    assign dp = ~seg_d[7];
+    assign an = ~sw;// high active display 
+    assign dp = ~seg_d[7]; // low active display
     assign seg = ~seg_d[6:0];
 
     // btn은 누를때 high
